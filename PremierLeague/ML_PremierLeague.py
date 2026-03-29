@@ -80,3 +80,43 @@ print(pred_labels)
 
 
 
+
+# Prediction function — use this to predict any match
+
+def predecir_partido(home_team, away_team):
+    home_enc = le_home.transform([home_team])[0]
+    away_enc = le_away.transform([away_team])[0]
+
+    home_goals_avg = df[df['Home'] == home_team]['home_goals_avg'].iloc[-1]
+    home_conceded_avg = df[df['Home'] == home_team]['home_conceded_avg'].iloc[-1]
+    away_goals_avg = df[df['Away'] == away_team]['away_goals_avg'].iloc[-1]
+    away_conceded_avg = df[df['Away'] == away_team]['away_conceded_avg'].iloc[-1]
+
+    partido = pd.DataFrame([[home_enc, away_enc, home_goals_avg, away_goals_avg,
+                             home_conceded_avg, away_conceded_avg]],
+                           columns=['home_encoded', 'away_encoded', 'home_goals_avg',
+                                    'away_goals_avg', 'home_conceded_avg', 'away_conceded_avg'])
+
+    prediccion = model.predict(partido)
+    resultado = le_result.inverse_transform(prediccion)
+    return resultado[0]
+
+
+
+print("Equipos disponibles:")
+print(df['Home'].unique())
+
+home_team = input("Equipo local: ")
+away_team = input("Equipo visitante: ")
+
+resultado = predecir_partido(home_team, away_team)
+print(f"Resultado predicho: {resultado}")
+
+#Cuando ejecutas el script, la terminal se para y espera a que escribas el nombre del equipo local, luego el visitante, y finalmente imprime la predicción.
+
+#Se vería así en la terminal:
+
+#Equipos disponibles: ['Arsenal' 'Aston Villa' 'Chelsea' ...]
+#Equipo local: Arsenal
+#Equipo visitante: Chelsea
+#Resultado predicho: Home Win
