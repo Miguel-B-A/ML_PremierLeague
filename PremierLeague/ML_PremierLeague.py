@@ -120,3 +120,15 @@ print(f"Resultado predicho: {resultado}")
 #Equipo local: Arsenal
 #Equipo visitante: Chelsea
 #Resultado predicho: Home Win
+
+
+
+
+from sklearn.metrics import accuracy_score
+print(accuracy_score(y_test, predictions))
+
+from sklearn.metrics import confusion_matrix
+print(confusion_matrix(y_test, predictions))
+
+from sklearn.metrics import classification_report
+print(classification_report(y_test, predictions)
