@@ -33,23 +33,30 @@ print(df['result'].value_counts(normalize=True).round(3)) #What percentage of ea
 
 from sklearn.preprocessing import LabelEncoder
 le_temp = LabelEncoder()
-df['result_encoded'] = le_temp.fit_transform(df['result'])
+df['result_encoded'] = le_temp.fit_transform(df['result']) #Transformar la variable objetivo a números para poder usarla en el modelo
 
-df.corr(numeric_only=True)['result_encoded'].sort_values(ascending=False)
+#Correlación de cada variable numérica con el resultado. 
+#Esto nos da una idea de qué variables podrían ser más importantes para predecir el resultado.
+df.corr(numeric_only=True)['result_encoded'].sort_values(ascending=False) 
 
 df['HomeGoals'].hist(bins=10)
 plt.title('Distribution of Home Goals')
 plt.show()
 
 df['Date'] = pd.to_datetime(df['Date'])
-df = df.sort_values('Date').reset_index(drop=True)
+df = df.sort_values('Date').reset_index(drop=True) #Primero ordena todos los partidos por fecha
 
+#Luego calcula el promedio de goles de los últimos 5 partidos de cada equipo. La idea es: si el Manchester City lleva 5 partidos marcando 3 goles de media, 
+#eso es una señal mucho más útil para el modelo que simplemente saber que es el Manchester City.
 df['home_goals_avg'] = df.groupby('Home')['HomeGoals'].transform(lambda x: x.rolling(window=5, min_periods=1).mean())
 df['away_goals_avg'] = df.groupby('Away')['AwayGoals'].transform(lambda x: x.rolling(window=5, min_periods=1).mean())
 
+#También calculamos el promedio de goles concedidos, porque un equipo que concede muchos goles es más propenso a perder.
 df['home_conceded_avg'] = df.groupby('Home')['AwayGoals'].transform(lambda x: x.rolling(window=5, min_periods=1).mean())
 df['away_conceded_avg'] = df.groupby('Away')['HomeGoals'].transform(lambda x: x.rolling(window=5, min_periods=1).mean())
 
+#Volvemos a transformar la variable objetivo porque al hacer dropna() se han eliminado algunas filas, 
+# y necesitamos asegurarnos de que los números estén actualizados.
 df = df.dropna()
 
 le_home = LabelEncoder()
@@ -58,8 +65,10 @@ le_result = LabelEncoder()
 
 df['home_encoded'] = le_home.fit_transform(df['Home'])
 df['away_encoded'] = le_away.fit_transform(df['Away'])  
-df['result_encoded'] = le_result.fit_transform(df['result'])
+df['result_encoded'] = le_result.fit_transform(df['result']) 
 
+
+#Entrenamos el modelo
 from sklearn.model_selection import train_test_split
 
 features = ['home_encoded', 'away_encoded', 'home_goals_avg', 'away_goals_avg', 'home_conceded_avg', 'away_conceded_avg']
@@ -68,9 +77,10 @@ y = df['result_encoded']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+#Aplicamos regresión logística, que es un modelo de clasificación muy común.
 from sklearn.linear_model import LogisticRegression
 
-model = LogisticRegression(max_iter=1000)
+model = LogisticRegression(max_iter=1000, class_weight='balanced')
 model.fit(X_train, y_train)
 
 predictions = model.predict(X_test)
@@ -81,7 +91,8 @@ print(pred_labels)
 
 
 
-# Prediction function — use this to predict any match
+# Prediction function, use this to predict any match
+#Funcion de prediccion, para predecir cualquier partido
 
 def predecir_partido(home_team, away_team):
     home_enc = le_home.transform([home_team])[0]
@@ -112,9 +123,7 @@ away_team = input("Equipo visitante: ")
 resultado = predecir_partido(home_team, away_team)
 print(f"Resultado predicho: {resultado}")
 
-#Cuando ejecutas el script, la terminal se para y espera a que escribas el nombre del equipo local, luego el visitante, y finalmente imprime la predicción.
-
-#Se vería así en la terminal:
+#Cuando ejecutas el script, la terminal espera a que escribas el nombre del equipo local, luego el visitante, y finalmente imprime la predicción.
 
 #Equipos disponibles: ['Arsenal' 'Aston Villa' 'Chelsea' ...]
 #Equipo local: Arsenal
@@ -122,7 +131,7 @@ print(f"Resultado predicho: {resultado}")
 #Resultado predicho: Home Win
 
 
-
+##Evaluacion del modelo
 
 from sklearn.metrics import accuracy_score
 print(accuracy_score(y_test, predictions))
@@ -132,3 +141,14 @@ print(confusion_matrix(y_test, predictions))
 
 from sklearn.metrics import classification_report
 print(classification_report(y_test, predictions))
+
+
+
+
+from sklearn.metrics import accuracy_score
+
+train_predictions = model.predict(X_train)
+test_predictions = model.predict(X_test)
+
+print(f"Accuracy en train: {round(accuracy_score(y_train, train_predictions), 3)}")
+print(f"Accuracy en test:  {round(accuracy_score(y_test, test_predictions), 3)}")
