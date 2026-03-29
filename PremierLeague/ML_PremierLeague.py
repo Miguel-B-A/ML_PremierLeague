@@ -131,4 +131,4 @@ from sklearn.metrics import confusion_matrix
 print(confusion_matrix(y_test, predictions))
 
 from sklearn.metrics import classification_report
-print(classification_report(y_test, predictions)
+print(classification_report(y_test, predictions))
