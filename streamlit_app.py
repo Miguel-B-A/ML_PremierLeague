@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
@@ -10,7 +11,14 @@ st.set_page_config(page_title="Premier League Predictor", page_icon="⚽")
 # ── Load and prepare data ──────────────────────────────────────────────────────
 @st.cache_data
 def load_and_train():
-    df = pd.read_csv('premier-league-matches.csv')
+    import kagglehub
+
+    os.environ['KAGGLE_USERNAME'] = st.secrets["KAGGLE_USERNAME"]
+    os.environ['KAGGLE_KEY'] = st.secrets["KAGGLE_KEY"]
+
+    path = kagglehub.dataset_download("evangower/premier-league-matches-19922022")
+    csv_path = os.path.join(path, 'premier-league-matches.csv')
+    df = pd.read_csv(csv_path)
 
     df['result'] = df['FTR'].map({'H': 'Home Win', 'D': 'Draw', 'A': 'Away Win'})
     df['Date'] = pd.to_datetime(df['Date'])
