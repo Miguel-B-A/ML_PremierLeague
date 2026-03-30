@@ -4,7 +4,9 @@ A machine learning project to predict Premier League match results (Home Win, Dr
 
 Built following the [QuantifAI](https://quantifai.beehiiv.com) newsletter series as a hands-on introduction to the full ML pipeline.
 
-\---
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://premier-league-predictor-mba.streamlit.app/)
+
+---
 
 ## About the project
 
@@ -14,22 +16,22 @@ This project applies classification techniques to predict football match outcome
 
 **Target variable**: Match result — Home Win, Draw, or Away Win.
 
-\---
+---
 
 ## Installation
 
 ### Requirements
 
-* Python 3.7+
-* Anaconda (recommended)
+- Python 3.7+
+- Anaconda (recommended)
 
 ### Setup
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Miguel-B-A/ML\_PremierLeague.git
-cd ML\_PremierLeague
+git clone https://github.com/Miguel-B-A/ML_PremierLeague.git
+cd ML_PremierLeague
 ```
 
 2. Install dependencies:
@@ -42,15 +44,23 @@ pip install pandas matplotlib scikit-learn
 
 ```python
 import kagglehub
-path = kagglehub.dataset\_download("evangower/premier-league-matches-19922022")
+path = kagglehub.dataset_download("evangower/premier-league-matches-19922022")
 print("Path to dataset files:", path)
 ```
 
-> You will need a Kaggle account and API key configured. See \[Kaggle API docs](https://www.kaggle.com/docs/api) for instructions.
+> You will need a Kaggle account and API key configured. See [Kaggle API docs](https://www.kaggle.com/docs/api) for instructions.
 
-4. Update the CSV path in `ML\_PremierLeague.py` to match where the dataset was downloaded on your machine.
+4. Update the CSV path in `ML_PremierLeague.py` to match where the dataset was downloaded on your machine.
 
-\---
+---
 
-## 
+## Project status
 
+Work in progress — currently at the data cleaning and preparation stage.
+
+- [x] Data exploration (shape, types, missing values)
+- [x] Target variable analysis and encoding
+- [x] Feature engineering (rolling averages)
+- [x] Model training (Logistic Regression with class balancing)
+- [x] Model evaluation (accuracy, confusion matrix, classification report)
+- [x] Streamlit app deployed
