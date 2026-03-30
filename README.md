@@ -54,13 +54,3 @@ print("Path to dataset files:", path)
 
 ---
 
-## Project status
-
-Work in progress — currently at the data cleaning and preparation stage.
-
-- [x] Data exploration (shape, types, missing values)
-- [x] Target variable analysis and encoding
-- [x] Feature engineering (rolling averages)
-- [x] Model training (Logistic Regression with class balancing)
-- [x] Model evaluation (accuracy, confusion matrix, classification report)
-- [x] Streamlit app deployed
